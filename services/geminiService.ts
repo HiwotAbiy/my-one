@@ -16,24 +16,29 @@ Your personality:
 `;
 
 export class GeminiService {
-  private ai: GoogleGenAI;
-  private chat: Chat;
+  private ai: GoogleGenAI | null = null;
+  private chat: Chat | null = null;
 
-  constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-    this.chat = this.ai.chats.create({
-      model: 'gemini-3-flash-preview',
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.9,
-        topP: 0.95,
-      },
-    });
+  private init() {
+    if (!this.ai) {
+      this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+      this.chat = this.ai.chats.create({
+        model: 'gemini-3-flash-preview',
+        config: {
+          systemInstruction: SYSTEM_INSTRUCTION,
+          temperature: 0.9,
+          topP: 0.95,
+        },
+      });
+    }
+    return this.chat;
   }
 
   async sendMessage(message: string): Promise<string> {
     try {
-      const response: GenerateContentResponse = await this.chat.sendMessage({ message });
+      const chat = this.init();
+      if (!chat) throw new Error("Chat not initialized");
+      const response: GenerateContentResponse = await chat.sendMessage({ message });
       return response.text || "Bestie, my brain just glitched. Say that again? 💀";
     } catch (error) {
       console.error("Gemini Error:", error);
@@ -43,7 +48,9 @@ export class GeminiService {
 
   async *sendMessageStream(message: string) {
     try {
-      const result = await this.chat.sendMessageStream({ message });
+      const chat = this.init();
+      if (!chat) throw new Error("Chat not initialized");
+      const result = await chat.sendMessageStream({ message });
       for await (const chunk of result) {
         const c = chunk as GenerateContentResponse;
         yield c.text;
