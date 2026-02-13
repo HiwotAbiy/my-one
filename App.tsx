@@ -1,17 +1,17 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Message, BestieState } from './types.ts';
-import { geminiService } from './services/geminiService.ts';
+import { Coffee, Ghost, Heart, Send, Sparkles } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import Bubble from './components/Bubble.tsx';
 import FloatingDecorations from './components/FloatingDecorations.tsx';
-import { Send, Sparkles, Heart, Coffee, Ghost } from 'lucide-react';
+import { geminiService } from './services/geminiService.ts';
+import { BestieState, Message } from './types.ts';
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'model',
-      text: "OMG BESTIE!! ✨ I've been literally waiting for you all day! What's the tea? 💅☕",
+      text: "OMG! ✨ I've been literally waiting for you all day. Spill the tea! 💅☕",
       timestamp: new Date(),
     },
   ]);
@@ -72,7 +72,7 @@ const App: React.FC = () => {
       setBestieStats(prev => ({
         ...prev,
         chaoticLevel: Math.min(100, Math.max(50, prev.chaoticLevel + (Math.random() * 10 - 5))),
-        mood: responseText.length > 50 ? 'Yapping 🗣️' : 'Judging 💅'
+        mood: responseText.length > 80 ? 'Yapping 🗣️' : 'Judging 💅'
       }));
 
     } catch (error) {
@@ -105,7 +105,7 @@ const App: React.FC = () => {
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
             </div>
             <div>
-              <h1 className="font-fredoka text-xl font-bold text-rose-500 tracking-tight">Lets Gist Bestie</h1>
+              <h1 className="font-fredoka text-xl font-bold text-rose-500 tracking-tight">Lets Gist</h1>
               <p className="text-[10px] uppercase font-bold tracking-widest text-pink-400">Online & Judging</p>
             </div>
           </div>
@@ -134,7 +134,7 @@ const App: React.FC = () => {
                 <span className="text-xs">💅</span>
               </div>
               <div className="bg-white border border-pink-50 px-4 py-2 rounded-2xl rounded-bl-none text-pink-300 text-xs font-bold">
-                Bestie is typing...
+                Thinking of a read...
               </div>
             </div>
           )}
@@ -152,7 +152,7 @@ const App: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Spill the tea..."
+              placeholder="Spill it..."
               className="flex-1 bg-transparent border-none focus:outline-none px-2 text-gray-700 placeholder:text-pink-200 font-medium"
             />
             <button
@@ -176,7 +176,7 @@ const App: React.FC = () => {
       </div>
       
       <p className="mt-4 text-[10px] text-pink-400 font-bold uppercase tracking-widest text-center">
-        Powered by Pure Chaos & Gemini ✨
+        Powered by Pure Chaos ✨
       </p>
     </div>
   );

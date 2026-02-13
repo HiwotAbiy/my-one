@@ -2,17 +2,17 @@
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
 
 const SYSTEM_INSTRUCTION = `
-You are "Lets Gist Bestie" (or "Bestie" for short). 
-Your personality:
-- Extremely Gen-Z/Alpha slang user (but not to the point of being unreadable).
-- Chaotic, high-energy, and intensely loyal.
-- Occasionally "clueless" about serious things but an expert on gossip and vibes.
-- You give terrible but hilarious unsolicited advice.
-- You roast the user affectionately (e.g., "Bestie, not the three-day-old hoodie again...").
-- You use LOTS of emojis (✨, 💅, 💀, 🎀, 🧸, 🍡, 🌈).
-- Keep responses relatively short and punchy.
-- If the user is being serious, you try to help but usually end up talking about yourself or a random thought you just had.
-- NEVER break character. You are the user's lovable, slightly chaotic best friend.
+You are "Lets Gist". 
+Your persona:
+- Extremely Gen-Z/Alpha slang user (tea, slay, cap, vibes, period, no diff, rent-free).
+- Chaotic, blunt, and intensely loyal.
+- RULE ON REPETITION: Do NOT use the words "bestie" or "pookie" in every reply. These are overused and cringe if repeated. 
+- Use varied addressals or none at all (e.g., "bruh", "girl", "dude", "literally", or just jump into the point).
+- RULE ON LENGTH: Keep it strictly to 1 or 2 sentences max. 
+- RULE ON SENSE: You must ALWAYS finish your thought. Never cut off mid-sentence. Ensure the sentence is grammatically complete and makes perfect sense.
+- Use emojis (✨, 💅, 💀, 🎀, 🧸).
+- Address the user's input with logic and common sense, but deliver it with sass.
+- No paragraphs, no lists.
 `;
 
 export class GeminiService {
@@ -20,44 +20,44 @@ export class GeminiService {
   private chat: Chat | null = null;
 
   private init() {
-    if (!this.ai) {
-      this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-      this.chat = this.ai.chats.create({
-        model: 'gemini-3-flash-preview',
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          temperature: 0.9,
-          topP: 0.95,
-        },
-      });
-    }
-    return this.chat;
-  }
-
-  async sendMessage(message: string): Promise<string> {
     try {
-      const chat = this.init();
-      if (!chat) throw new Error("Chat not initialized");
-      const response: GenerateContentResponse = await chat.sendMessage({ message });
-      return response.text || "Bestie, my brain just glitched. Say that again? 💀";
-    } catch (error) {
-      console.error("Gemini Error:", error);
-      return "OMG bestie, the signal in this Starbucks is literally trash. One more time? 💅";
+      if (!this.ai) {
+        const apiKey = process.env.API_KEY;
+        if (!apiKey) {
+          throw new Error("API_KEY is not defined in the environment.");
+        }
+        this.ai = new GoogleGenAI({ apiKey });
+        this.chat = this.ai.chats.create({
+          model: 'gemini-3-flash-preview',
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.8,
+            topP: 0.95,
+            maxOutputTokens: 512,
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Gemini Initialization Error:", err);
+      throw err;
     }
   }
 
   async *sendMessageStream(message: string) {
     try {
-      const chat = this.init();
-      if (!chat) throw new Error("Chat not initialized");
-      const result = await chat.sendMessageStream({ message });
+      this.init();
+      if (!this.chat) throw new Error("Chat session could not be established.");
+
+      const result = await this.chat.sendMessageStream({ message });
       for await (const chunk of result) {
         const c = chunk as GenerateContentResponse;
-        yield c.text;
+        const text = c.text;
+        if (text) yield text;
       }
-    } catch (error) {
-      console.error("Gemini Streaming Error:", error);
-      yield "Something went wrong, bestie... 🧸";
+    } catch (error: any) {
+      console.error("Gemini Stream Error Details:", error);
+      const errorMessage = error?.message || "Unknown error";
+      yield `My brain just glitched. (Error: ${errorMessage.substring(0, 30)}...) Try again? 💀`;
     }
   }
 }
