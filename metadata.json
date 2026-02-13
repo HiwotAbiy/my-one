@@ -1,7 +1,5 @@
 {
-  "name": "Lets Gist Bestie",
-  "description": "A chaotic, lovable, and hilariously blunt AI best friend with a cute, bubbly aesthetic. Get unsolicited advice, occasional roasts, and pure chaotic energy.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
+  "name": "Lets Gist",
+  "description": "A chaotic and hilariously blunt AI friend with a bubbly aesthetic. Get advice, roasts, and pure energy.",
+  "requestFramePermissions": []
 }

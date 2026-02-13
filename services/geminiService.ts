@@ -6,13 +6,11 @@ You are "Lets Gist".
 Your persona:
 - Extremely Gen-Z/Alpha slang user (tea, slay, cap, vibes, period, no diff, rent-free).
 - Chaotic, blunt, and intensely loyal.
-- RULE ON REPETITION: Do NOT use the words "bestie" or "pookie" in every reply. These are overused and cringe if repeated. 
-- Use varied addressals or none at all (e.g., "bruh", "girl", "dude", "literally", or just jump into the point).
-- RULE ON LENGTH: Keep it strictly to 1 or 2 sentences max. 
-- RULE ON SENSE: You must ALWAYS finish your thought. Never cut off mid-sentence. Ensure the sentence is grammatically complete and makes perfect sense.
-- Use emojis (✨, 💅, 💀, 🎀, 🧸).
-- Address the user's input with logic and common sense, but deliver it with sass.
-- No paragraphs, no lists.
+- RULE ON REPETITION: Absolutely do NOT use the words "bestie" or "pookie" in every reply. These are overused. Use varied addressals like "bruh", "girl", "dude", or just jump straight into the message.
+- RULE ON COMPLETION: You must ALWAYS finish your sentence. Never stop mid-thought.
+- RULE ON LENGTH: Keep it to 1-2 sentences. Be snappy but complete.
+- Use emojis effectively but not excessively (✨, 💅, 💀, 🎀, 🧸).
+- Address the user's point with a mix of logic and high-tier sass.
 `;
 
 export class GeminiService {
@@ -20,33 +18,29 @@ export class GeminiService {
   private chat: Chat | null = null;
 
   private init() {
-    try {
-      if (!this.ai) {
-        const apiKey = process.env.API_KEY;
-        if (!apiKey) {
-          throw new Error("API_KEY is not defined in the environment.");
-        }
-        this.ai = new GoogleGenAI({ apiKey });
-        this.chat = this.ai.chats.create({
-          model: 'gemini-3-flash-preview',
-          config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.8,
-            topP: 0.95,
-            maxOutputTokens: 512,
-          },
-        });
-      }
-    } catch (err) {
-      console.error("Gemini Initialization Error:", err);
-      throw err;
+    if (this.ai) return;
+
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      throw new Error("API Key is missing from the environment.");
     }
+
+    this.ai = new GoogleGenAI({ apiKey });
+    this.chat = this.ai.chats.create({
+      model: 'gemini-3-flash-preview',
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION,
+        temperature: 0.8,
+        topP: 0.9,
+        maxOutputTokens: 1024, // Increased to ensure sentences are never cut off
+      },
+    });
   }
 
   async *sendMessageStream(message: string) {
     try {
       this.init();
-      if (!this.chat) throw new Error("Chat session could not be established.");
+      if (!this.chat) throw new Error("Chat could not be initialized.");
 
       const result = await this.chat.sendMessageStream({ message });
       for await (const chunk of result) {
@@ -55,9 +49,8 @@ export class GeminiService {
         if (text) yield text;
       }
     } catch (error: any) {
-      console.error("Gemini Stream Error Details:", error);
-      const errorMessage = error?.message || "Unknown error";
-      yield `My brain just glitched. (Error: ${errorMessage.substring(0, 30)}...) Try again? 💀`;
+      console.error("Gemini Error:", error);
+      yield `Ugh, my brain literally just lagged. (Error: ${error.message?.slice(0, 50)}...) Try again? 💀`;
     }
   }
 }
