@@ -105,7 +105,7 @@ const App: React.FC = () => {
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
             </div>
             <div>
-              <h1 className="font-fredoka text-xl font-bold text-rose-500 tracking-tight">Dumbass Bestie AI</h1>
+              <h1 className="font-fredoka text-xl font-bold text-rose-500 tracking-tight">Lets Gist Bestie</h1>
               <p className="text-[10px] uppercase font-bold tracking-widest text-pink-400">Online & Judging</p>
             </div>
           </div>
