@@ -20,12 +20,12 @@ export class GeminiService {
   private chat: Chat;
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
     this.chat = this.ai.chats.create({
       model: 'gemini-3-flash-preview',
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.9, // High temperature for more chaos
+        temperature: 0.9,
         topP: 0.95,
       },
     });

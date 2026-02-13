@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Message } from '../types';
+import { Message } from '../types.ts';
 
 interface BubbleProps {
   message: Message;

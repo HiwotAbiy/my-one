@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Message, BestieState } from './types';
-import { geminiService } from './services/geminiService';
-import Bubble from './components/Bubble';
-import FloatingDecorations from './components/FloatingDecorations';
+import { Message, BestieState } from './types.ts';
+import { geminiService } from './services/geminiService.ts';
+import Bubble from './components/Bubble.tsx';
+import FloatingDecorations from './components/FloatingDecorations.tsx';
 import { Send, Sparkles, Heart, Coffee, Ghost } from 'lucide-react';
 
 const App: React.FC = () => {
